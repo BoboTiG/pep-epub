@@ -1,4 +1,4 @@
-#!/bin/sh -eu
+#!/bin/bash -eux
 # Dependency: pandoc
 
 convert() {
@@ -9,11 +9,11 @@ convert() {
     file="$1"
     pep="$(head -1 "${file}")"
     title="$(head -2 "${file}" | tail -1 | sed 's/Title: // ; s/"/\"/g')"
-    echo "Processing ${pep} (${title}) ..."
+
+    echo ">>> Processing ${pep} (${title}) ..."
     pandoc \
         --from=rst \
         --to=epub3 \
-        --normalize \
         --ascii \
         --indented-code-classes=python \
         --table-of-contents \
@@ -41,20 +41,46 @@ is_valid() {
     return 1
 }
 
-setup() {
-    [ ! -d peps ] && git clone --depth=1 https://github.com/python/peps.git
-    mkdir -p peps_epub
-}
+update() {
+    local current_rev
+    local files
+    local new_rev
 
-main() {
-    setup
-    cd peps
+    current_rev="$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)"
 
-    for pep in pep-*.txt; do
+    echo ">>> Updating from revision ${current_rev} ..."
+    git checkout master
+    git pull
+
+    new_rev="$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)"
+    git checkout "${new_rev}"
+
+    while IFS= read pep; do
         if is_valid "${pep}"; then
             convert "${pep}"
         fi
-    done
+    done < <(git diff --name-only --diff-filter=AM "${current_rev}" "${new_rev}" 'pep-*.txt')
 }
 
-main
+main() {
+    local arg
+
+    arg="${1}"
+
+    mkdir -p peps_epub
+    pushd peps
+
+    if [ "${arg:=unset}" = "--all" ]; then
+        for pep in pep-*.txt; do
+            if is_valid "${pep}"; then
+                convert "${pep}"
+            fi
+        done
+    else
+        update
+    fi
+
+    popd
+}
+
+main "$@"
