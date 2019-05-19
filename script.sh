@@ -62,6 +62,8 @@ update() {
     while IFS= read pep; do
         if is_valid "${pep}"; then
             convert "${pep}"
+        else
+            echo "* skipping ${pep} ($(grep 'Status: ' "${pep}"))"
         fi
     done < <(git diff --name-only --diff-filter=AM "${current_rev}" "${new_rev}" 'pep-*.rst' 'pep-*.txt')
 }
