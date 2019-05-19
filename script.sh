@@ -35,6 +35,8 @@ is_valid() {
         return 1
     elif grep 'Status: Active' "${pep}" >/dev/null; then
         return 0
+    elif grep 'Status: Accepted' "${pep}" >/dev/null; then
+        return 0
     elif grep 'Status: Approved' "${pep}" >/dev/null; then
         return 0
     elif grep 'Status: Final' "${pep}" >/dev/null; then
