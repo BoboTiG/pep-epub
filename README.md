@@ -2,6 +2,12 @@
 
 This is a *unofficial* repository where I stock all valid [PEP](https://github.com/python/peps.git)s in the EPUB format.
 
+## Repository Cloning
+
+```bash
+git clone --recursive git@github.com:BoboTiG/pep-epub.git
+```
+
 ## Conversion
 
 To convert original files, you will need `pandoc`.
