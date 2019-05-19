@@ -4,9 +4,11 @@
 convert() {
     local file
     local pep
+    local output
     local title
 
     file="$1"
+    output="$(echo "${file}" | sed s'#.rst$#.epub# ; s#.txt$#.epub#')"
     pep="$(head -1 "${file}")"
     title="$(head -2 "${file}" | tail -1 | sed 's/Title: // ; s/"/\"/g')"
 
@@ -21,7 +23,7 @@ convert() {
         --metadata="creator:Python" \
         --metadata="language:en" \
         --metadata="title:${pep} (${title})" \
-        --output="../peps_epub/${file%txt}epub" \
+        --output="../peps_epub/${output}" \
         "${file}"
 }
 
@@ -59,7 +61,7 @@ update() {
         if is_valid "${pep}"; then
             convert "${pep}"
         fi
-    done < <(git diff --name-only --diff-filter=AM "${current_rev}" "${new_rev}" 'pep-*.txt')
+    done < <(git diff --name-only --diff-filter=AM "${current_rev}" "${new_rev}" 'pep-*.rst' 'pep-*.txt')
 }
 
 main() {
@@ -71,7 +73,7 @@ main() {
     pushd peps
 
     if [ "${arg:=unset}" = "--all" ]; then
-        for pep in pep-*.txt; do
+        for pep in pep-*.rst pep-*.txt; do
             if is_valid "${pep}"; then
                 convert "${pep}"
             fi
