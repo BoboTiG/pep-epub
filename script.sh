@@ -31,15 +31,7 @@ is_valid() {
     local pep
 
     pep="$1"
-    if grep 'This PEP has partially been superseded by' "${pep}" >/dev/null; then
-        return 1
-    elif grep 'Status: Active' "${pep}" >/dev/null; then
-        return 0
-    elif grep 'Status: Accepted' "${pep}" >/dev/null; then
-        return 0
-    elif grep 'Status: Approved' "${pep}" >/dev/null; then
-        return 0
-    elif grep 'Status: Final' "${pep}" >/dev/null; then
+    if grep -q 'Status: [Active|Accepted|Final]' "${pep}"; then
         return 0
     fi
     return 1
