@@ -1,6 +1,7 @@
 name: Update PEPs
 
 on:
+  # Update PEPS every day at midnight
   schedule:
     - cron: '0 0 * * *'
 
