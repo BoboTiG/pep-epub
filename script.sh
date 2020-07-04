@@ -46,7 +46,7 @@ update() {
 
     echo ">>> Updating from revision ${current_rev} ..."
     git checkout master
-    git pull
+    git pull -ff origin master
 
     new_rev="$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)"
     git checkout "${new_rev}"
