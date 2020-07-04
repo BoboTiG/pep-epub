@@ -36,6 +36,6 @@ jobs:
       uses: Automattic/action-commit-to-branch@master
       with:
         branch: master
-        commit_message: PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}
+        commit_message: "PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
