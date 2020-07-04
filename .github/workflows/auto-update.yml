@@ -29,12 +29,13 @@ jobs:
         cd ..
 
     - name: Display the new PEPs revision
-      run: echo "PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}"
+      run: |
+        echo "PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}"
 
     - name: Push changes
       uses: Automattic/action-commit-to-branch@master
       with:
         branch: master
-        commit_message: "PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}"
+        commit_message: PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
