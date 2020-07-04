@@ -17,7 +17,9 @@ jobs:
       run: sudo apt-get install -y pandoc
 
     - name: Update PEPs
-      run: bash script.sh
+      run: |
+        git config pull.ff only
+        bash script.sh
 
     - name: Get the current PEPs revision
       id: current_rev
