@@ -3,8 +3,6 @@ name: Update PEPs
 on:
   schedule:
     - cron: '0 0 * * *'
-  pull_request:
-    branches: '*'
 
 jobs:
   build:
@@ -27,10 +25,6 @@ jobs:
         cd peps
         echo "::set-output name=rev::$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)"
         cd ..
-
-    - name: Display the new PEPs revision
-      run: |
-        echo "PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}"
 
     - name: Push changes
       uses: Automattic/action-commit-to-branch@master
