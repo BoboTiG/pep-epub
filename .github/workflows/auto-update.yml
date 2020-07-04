@@ -27,7 +27,9 @@ jobs:
         cd peps
         echo "::set-output name=rev::$(printf "%s" "$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)")"
         cd ..
-        echo "PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}"
+
+    - name: Display the new PEPs revision
+      run: echo "PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}"
 
     - name: Push changes
       uses: Automattic/action-commit-to-branch@master
