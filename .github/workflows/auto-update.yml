@@ -1,0 +1,35 @@
+name: Update PEPs
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  pull_request:
+    branches: '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install pandoc
+      run: apt install -y pandoc
+
+    - name: Update PEPs
+      run: bash script.sh
+
+    - name: Get the current PEPs revision
+      id: current_rev
+      run: |
+        cd peps
+        echo "::set-output name=rev::$(printf "%s" "$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)")"
+        cd ..
+
+    - name: Push changes
+      uses: Automattic/action-commit-to-branch@master
+      with:
+        branch: tests
+        commit_message: "PEPs: upgrade to rev ${{ steps.current_rev.outputs.rev }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
