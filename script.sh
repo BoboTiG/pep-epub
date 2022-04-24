@@ -45,8 +45,8 @@ update() {
     current_rev="$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)"
 
     echo ">>> Updating from revision ${current_rev} ..."
-    git checkout master
-    git pull --ff-only origin master
+    git checkout main
+    git pull --ff-only origin main
 
     new_rev="$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)"
     git checkout "${new_rev}"
