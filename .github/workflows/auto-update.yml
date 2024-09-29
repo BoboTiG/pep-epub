@@ -26,7 +26,7 @@ jobs:
       run: sudo apt-get install -y pandoc
 
     - name: Update PEPs
-      run: bash script.sh
+      run: python3 script.py
 
     - name: Get the current PEPs revision
       id: current_rev
