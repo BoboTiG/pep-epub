@@ -9,10 +9,10 @@ convert() {
     local date
 
     file="$1"
-    output="$(echo "${file}" | sed s'#.rst$#.epub# ; s#.txt$#.epub#')"
-    pep="$(head -1 "${file}")"
-    title="$(head -2 "${file}" | tail -1 | sed 's/Title: // ; s/"/\"/g')"
-    date="$(grep 'Created:' "${file}" | head -1 | sed 's/Created: // ; s/"/\"/g')"
+    output="$(echo "${file}" | sed s'#.rst$#.epub#')"
+    pep="$(head -1 "${file}" | sed 's/ \s*/ /g')"
+    title="$(head -2 "${file}" | tail -1 | sed 's/Title:\s*// ; s/"/\"/g')"
+    date="$(grep 'Created:' "${file}" | head -1 | sed 's/Created:\s*// ; s/"/\"/g')"
     date="$(date --date=${date} '+%Y-%m-%d')"
 
     echo ">>> Processing ${pep} (${title}) ..."
@@ -35,7 +35,7 @@ is_valid() {
     local pep
 
     pep="$1"
-    if grep -q 'Status: [Active|Accepted|Final]' "${pep}"; then
+    if grep -q -q 'Status:\s*[Active|Accepted|Final]' "${pep}"; then
         return 0
     fi
     return 1
@@ -75,6 +75,12 @@ main() {
     if [ "${arg:=unset}" = "--all" ]; then
         for pep in pep-*.rst; do
             if is_valid "${pep}"; then
+                convert "${pep}"
+            fi
+        done
+    elif [ "${arg:=unset}" = "--missing" ]; then
+        for pep in pep-*.rst; do
+            if ! test -f "../../peps_epub/$(echo "${pep}" | sed s'#.rst$#.epub#')" && is_valid "${pep}"; then
                 convert "${pep}"
             fi
         done
