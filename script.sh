@@ -6,11 +6,14 @@ convert() {
     local pep
     local output
     local title
+    local date
 
     file="$1"
     output="$(echo "${file}" | sed s'#.rst$#.epub# ; s#.txt$#.epub#')"
     pep="$(head -1 "${file}")"
     title="$(head -2 "${file}" | tail -1 | sed 's/Title: // ; s/"/\"/g')"
+    date="$(grep 'Created:' "${file}" | head -1 | sed 's/Created: // ; s/"/\"/g')"
+    date="$(date --date=${date} '+%Y-%m-%d')"
 
     echo ">>> Processing ${pep} (${title}) ..."
     pandoc \
@@ -19,11 +22,12 @@ convert() {
         --ascii \
         --indented-code-classes=python \
         --table-of-contents \
-        --epub-cover-image="../cover.jpg" \
+        --epub-cover-image="../../cover.jpg" \
         --metadata="creator:Python" \
         --metadata="language:en" \
         --metadata="title:${pep} (${title})" \
-        --output="../peps_epub/${output}" \
+        --metadata="date:${date}" \
+        --output="../../peps_epub/${output}" \
         "${file}"
 }
 
@@ -57,7 +61,7 @@ update() {
         else
             echo "* skipping ${pep} ($(grep 'Status: ' "${pep}"))"
         fi
-    done < <(git diff --name-only --diff-filter=AM "${current_rev}" "${new_rev}" 'pep-*.rst' 'pep-*.txt')
+    done < <(git diff --name-only --diff-filter=AM "${current_rev}" "${new_rev}" 'pep-*.rst')
 }
 
 main() {
@@ -66,10 +70,10 @@ main() {
     arg="${1}"
 
     mkdir -p peps_epub
-    pushd peps
+    pushd peps/peps
 
     if [ "${arg:=unset}" = "--all" ]; then
-        for pep in pep-*.rst pep-*.txt; do
+        for pep in pep-*.rst; do
             if is_valid "${pep}"; then
                 convert "${pep}"
             fi
