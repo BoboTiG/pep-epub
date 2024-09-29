@@ -32,7 +32,7 @@ jobs:
       id: current_rev
       run: |
         cd peps
-        echo "::set-output name=rev::$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)"
+        echo "rev=$(git log --oneline --max-count=1 --abbrev | cut -d' ' -f1)" >> $GITHUB_OUTPUT
         cd ..
 
     - name: Push changes
