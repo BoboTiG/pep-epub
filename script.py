@@ -17,7 +17,7 @@ def convert(file: Path) -> None:
         return
 
     authors = get_value("Author", content)
-    date = datetime.strptime(get_value("Created", content), '%d-%b-%Y').isoformat()
+    date = datetime.strptime(get_value("Created", content), "%d-%b-%Y").isoformat()
     pep = get_value("PEP", content, with_key=True)
     title = get_value("Title", content)
 
@@ -36,7 +36,7 @@ def convert(file: Path) -> None:
         *["--output", output(file)],
     ]
     for author in authors.split(","):
-        args.extend(["--metadata", f"contributor:{author.split("<")[0].strip()}"])
+        args.extend(["--metadata", f"contributor:{author.split('<')[0].strip()}"])
 
     print(f">>> Processing {pep} ({title}) …")
     check_call(["pandoc", *args, file])
