@@ -81,7 +81,7 @@ def update() -> None:
 
     changes = get("git", "diff", "--name-only", "--diff-filter=AM", current_rev, new_rev, "peps/pep-*.rst")
     for change in changes.splitlines():
-        convert(INPUT_DIR / change)
+        convert(INPUT_DIR.parent / change)
 
 
 def main() -> int:
