@@ -13,7 +13,7 @@ COVER = ROOT / "cover.jpg"
 def convert(file: Path) -> None:
     content = file.read_text()
 
-    if get_value("Status", content) not in {"Active", "Accepted", "Final"}:
+    if get_value("Status", content) not in {"Accepted", "Active", "Final"}:
         return
 
     authors = get_value("Author", content)
@@ -38,7 +38,7 @@ def convert(file: Path) -> None:
     for author in authors.split(","):
         args.extend(["--metadata", f"contributor:{author.split('<')[0].strip()}"])
 
-    print(f">>> Processing {pep} ({title}) …")
+    print(f">>> Processing {pep} ({title}) …", flush=True)
     check_call(["pandoc", *args, file])
 
 
@@ -71,11 +71,9 @@ def update() -> None:
         return check_output(cmd, cwd=INPUT_DIR.parent, text=True)
 
     current_rev = get("git", "log", "--oneline", "--max-count=1", "--abbrev")[:7]
-    print(f">>> Updating from revision {current_rev} …")
-
+    print(f">>> Updating from revision {current_rev} …", flush=True)
     call("git", "checkout", "main")
     call("git", "pull", "--ff-only", "origin", "main")
-
     new_rev = get("git", "log", "--oneline", "--max-count=1", "--abbrev")[:7]
     call("git", "checkout", new_rev)
 
@@ -85,18 +83,22 @@ def update() -> None:
 
 
 def main() -> int:
+    ret = 0
     args = create_parser().parse_args()
-    if args.all:
+
+    if args.all or args.missing:
         for file in INPUT_DIR.glob("pep-*.rst"):
-            convert(file)
-    elif args.missing:
-        for file in INPUT_DIR.glob("pep-*.rst"):
-            if not output(file).is_file():
+            if args.missing and output(file).is_file():
+                continue
+            try:
                 convert(file)
+            except StopIteration:
+                print(f"!! Error with {file}", flush=True)
+                ret += 1
     else:
         update()
 
-    return 0
+    return ret
 
 
 if __name__ == "__main__":
