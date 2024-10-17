@@ -84,7 +84,15 @@ def update() -> None:
     new_rev = get("git", "log", "--oneline", "--max-count=1", "--abbrev")[:7]
     call("git", "checkout", new_rev)
 
-    changes = get("git", "diff", "--name-only", "--diff-filter=AM", current_rev, new_rev, "peps/pep-*.rst")
+    changes = get(
+        "git",
+        "diff",
+        "--name-only",
+        "--diff-filter=AM",
+        current_rev,
+        new_rev,
+        "peps/pep-[0-9]*[0-9].rst",
+    )
     for change in changes.splitlines():
         convert(INPUT_DIR.parent / change)
 
