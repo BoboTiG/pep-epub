@@ -1,6 +1,6 @@
 # PEP in EPUB format
 
-![Update PEPs](https://github.com/BoboTiG/pep-epub/workflows/Update%20PEPs/badge.svg)
+[![Update PEPs](https://github.com/BoboTiG/pep-epub/actions/workflows/auto-update.yml/badge.svg)](https://github.com/BoboTiG/pep-epub/actions/workflows/auto-update.yml)
 
 This is an *unofficial* repository where you can find all *valid* [PEP](https://github.com/python/peps.git) in the EPUB format.
 
