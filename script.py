@@ -10,7 +10,7 @@ OUTPUT_DIR = ROOT / "peps_epub"
 COVER = ROOT / "cover.jpg"
 
 
-def convert(file: Path) -> None:
+def _convert(file: Path) -> None:
     content = file.read_text()
 
     if get_value("Status", content) not in {"Accepted", "Active", "Final"}:
@@ -40,6 +40,13 @@ def convert(file: Path) -> None:
 
     print(f">>> Processing {pep} ({title}) …", flush=True)
     check_call(["pandoc", *args, file], cwd=INPUT_DIR)
+
+
+def convert(file: Path) -> None:
+    try:
+        _convert(file)
+    except Exception:
+        print(f"!! Error with {file}", flush=True)
 
 
 def create_parser() -> ArgumentParser:
@@ -83,22 +90,17 @@ def update() -> None:
 
 
 def main() -> int:
-    ret = 0
     args = create_parser().parse_args()
 
     if args.all or args.missing:
         for file in INPUT_DIR.glob("pep-*.rst"):
             if args.missing and output(file).is_file():
                 continue
-            try:
-                convert(file)
-            except StopIteration:
-                print(f"!! Error with {file}", flush=True)
-                ret += 1
+            convert(file)
     else:
         update()
 
-    return ret
+    return 0
 
 
 if __name__ == "__main__":
