@@ -39,7 +39,7 @@ def convert(file: Path) -> None:
         args.extend(["--metadata", f"contributor:{author.split('<')[0].strip()}"])
 
     print(f">>> Processing {pep} ({title}) …", flush=True)
-    check_call(["pandoc", *args, file])
+    check_call(["pandoc", *args, file], cwd=INPUT_DIR)
 
 
 def create_parser() -> ArgumentParser:
